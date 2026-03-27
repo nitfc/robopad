@@ -7,24 +7,25 @@ const CACHE_NAME = "robopad-app-v1";
 
 /* キャッシュしたい静的ファイル（/robopad を必ず先頭につける） */
 const STATIC_ASSETS = [
-  "/robopad/",
   "/robopad/index.html",
-  "/robopad/manifest.json",
+  // "/robopad/manifest.json",
 
   "/robopad/icons/icon-192x192.png",
   "/robopad/icons/icon-512x512.png",
 
   // JS
-  "/robopad/js/main.js",
-  "/robopad/js/utility.js",
+  "/robopad/js/AppSettings.js",
   "/robopad/js/ble-controller.js",
+  "/robopad/js/main.js",
+  "/robopad/js/SettingStore.js",
+  "/robopad/js/utility.js",
 
-  "/robopad/js/ui/joystick.js",
-  "/robopad/js/ui/slider.js",
   "/robopad/js/ui/button-manager.js",
   "/robopad/js/ui/game-button.js",
-  "/robopad/js/ui/slider-setting-manager.js",
+  "/robopad/js/ui/joystick.js",
   "/robopad/js/ui/settingsUI.js",
+  "/robopad/js/ui/slider-setting-manager.js",
+  "/robopad/js/ui/slider.js",
 
   // CSS
   "/robopad/styles.css",
