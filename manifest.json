@@ -4,7 +4,7 @@
   "description": "ロボット操作のためのゲームパッド型コントローラーアプリ。",
   "start_url": "/robopad/index.html",
   "scope": "/robopad/",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "landscape",
   "background_color": "#EEEBE4",
   "theme_color": "#E8821A",
