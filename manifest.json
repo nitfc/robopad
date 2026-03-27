@@ -1,0 +1,25 @@
+{
+  "name": "Robot Gamepad Controller",
+  "short_name": "RoboPad",
+  "description": "ロボット操作のためのゲームパッド型コントローラーアプリ。",
+  "start_url": "/robopad/index.html",
+  "scope": "/robopad/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#EEEBE4",
+  "theme_color": "#E8821A",
+  "icons": [
+    {
+      "src": "/robopad/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/robopad/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

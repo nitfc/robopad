@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>RoboPad</title>
+<link rel="stylesheet" href="styles.css" />
+<script type="module" src="js/main.js" defer></script>
+<link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+<!-- ボタン用サウンドファイルをロード -->
+<audio id="btnClickSound" src="./button-click-solid-voiced.mp3" preload="auto"></audio>
+
+<!-- 接続ボタン & ログ（中央上部） -->
+<div class="connect-panel">
+  <div class="debug-panel">
+    <div class="debug-label">送信ログ</div>
+    <div class="debug-log" id="debugLog">-- 未接続 --</div>
+  </div>
+  <button class="connect-btn" id="connectBtn" onclick="toggleConnect()">接続する</button>
+</div>
+
+<div id="open-popup-btn">⚙</div>
+
+<!-- コントローラー -->
+<div class="controller">
+
+  <!-- 左下ジョイスティック -->
+  <div class="joystick-area">
+    <div class="joystick-container" id="joystickArea">
+      <div class="joy-label joy-label-x">X: <span id="joyX">0</span></div>
+      <div class="joy-label joy-label-y">Y: <span id="joyY">0</span></div>
+
+      <div class="joystick-bg-ring"></div>
+      <div class="joystick-crosshair"></div>
+      <div class="joystick-knob" id="joystickKnob">
+        <div class="joy-dir-marker">
+            <div></div>
+        </div>
+      </div>
+    </div>
+
+    <!--
+    <div class="joystick-values">
+      <div class="joystick-val">X: <span id="joyX">0</span></div>
+      <div class="joystick-val">Y: <span id="joyY">0</span></div>
+    </div>
+-->
+  </div>
+
+  <!-- スライダー群 -->
+<div class="slider-area">
+  <!-- スライダー #1 -->
+  <div class="slider-block" data-slider-id="0">
+    <div class="slider-label"><span class="slider-value">0</span></div>
+    <div class="slider-container">
+      <div class="slider-track"></div>
+      <div class="slider-knob sldr1">
+        <div class="slider-marker sldr1">S1</div>
+      </div>
+    </div>
+  </div>
+  <!-- スライダー #2 -->
+  <div class="slider-block" data-slider-id="1">
+    <div class="slider-label"><span class="slider-value">0</span></div>
+    <div class="slider-container">
+      <div class="slider-track"></div>
+      <div class="slider-knob sldr2">
+        <div class="slider-marker sldr2">S2</div>
+      </div>
+    </div>
+  </div>
+  <!-- スライダー #3 -->
+  <div class="slider-block" data-slider-id="2">
+    <div class="slider-label"><span class="slider-value">0</span></div>
+    <div class="slider-container">
+      <div class="slider-track"></div>
+      <div class="slider-knob sldr3">
+        <div class="slider-marker sldr3">S3</div>
+      </div>
+    </div>
+  </div>
+  <!-- スライダー #4 -->
+  <div class="slider-block" data-slider-id="3">
+    <div class="slider-label"><span class="slider-value">0</span></div>
+    <div class="slider-container">
+      <div class="slider-track"></div>
+      <div class="slider-knob sldr4">
+        <div class="slider-marker sldr4">S4</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- 右下 ABXY -->
+  <div class="buttons-area">
+    <!-- インジケータ（左側） -->
+    <div class="indicator-grid">
+      <div class="indicator" id="indX" style="grid-row:1;grid-column:2; color:#007AFF;"></div>
+      <div class="indicator" id="indY" style="grid-row:2;grid-column:1; color:#34C759;"></div>
+      <div class="indicator" id="indA" style="grid-row:2;grid-column:3; color:#FF453A;"></div>
+      <div class="indicator" id="indB" style="grid-row:3;grid-column:2; color:#FFD60A;"></div>
+    </div>
+
+    <!-- ABXY ボタン -->
+    <div class="abxy-grid">
+      <button class="action-btn btn-x" id="btnX" data-bit="2">X</button>
+      <button class="action-btn btn-y" id="btnY" data-bit="3">Y</button>
+      <button class="action-btn btn-a" id="btnA" data-bit="0">A</button>
+      <button class="action-btn btn-b" id="btnB" data-bit="1">B</button>
+    </div>
+  </div>
+
+    <!-- ←ショルダーボタン with インジケータ -->
+    <div class="left-shoulder-buttons">
+        <div>
+            <button class="shoulder-btn" id="btnL2" data-bit="7">L2</button>
+            <div class="indicator" id="indL2"></div>
+        </div>
+        <div>
+            <button class="shoulder-btn" id="btnL1" data-bit="6">L1</button>
+            <div class="indicator" id="indL1"></div>
+        </div>
+    </div>
+
+    <!-- 右ショルダーボタン with インジケータ -->
+    <div class="right-shoulder-buttons">
+        <div>
+            <div class="indicator" id="indR2"></div>
+            <button class="shoulder-btn" id="btnR2" data-bit="5">R2</button>
+        </div>
+        <div>
+            <div class="indicator" id="indR1"></div>
+            <button class="shoulder-btn" id="btnR1" data-bit="4">R1</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+</body>
+</html>

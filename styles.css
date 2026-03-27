@@ -1,0 +1,783 @@
+  :root {
+    --orange: #E8821A;
+    --orange-light: #F9A84D;
+    --orange-dark: #C46A0E;
+    --bg: #F5F3EF;
+    --surface: #FFFFFF;
+    --surface2: #EEEBE4;
+    --border: #DDD9CE;
+    --text: #2C2A25;
+    --text-muted: #9B9285;
+    --shadow: 0 2px 12px rgba(44,42,37,0.10);
+    --shadow-lg: 0 8px 32px rgba(44,42,37,0.14);
+    --radius: 16px;
+    --connected: #34C759;
+    --disconnected: #FF3B30;
+
+    --red: #FF453A;
+    --yellow: #FFD60A;
+    --blue: #007AFF;
+    --green: #34C759;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'Nunito', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    /* スワイプによる再読み込みを禁止 */
+    overscroll-behavior-y: none;
+  }
+
+  /* ========= 接続ボタン & ログ（上部中央） ========= */
+  .connect-panel {
+    width: 100%;
+    padding-top: 10px;
+    text-align: center;
+  }
+
+  .debug-panel {
+    width: 90%;
+    max-width: 360px;
+    margin: 0 auto 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+  }
+
+  .debug-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+
+  .debug-log {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--orange);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #open-popup-btn {
+    position: absolute;
+    top:7px;
+    left: calc(50% + 185px);
+    font-family: 'Space Mono', monospace;
+    font-size: 32px;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .connect-btn {
+    background: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 26px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  /* ========= コントローラー全体 ========= */
+  .controller {
+    flex: 1;
+    width: 100%;
+    position: relative;
+  }
+
+  /* ========= 左下ジョイスティック ========= */
+  .joystick-area {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .joystick-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    box-shadow: var(--shadow-lg);
+    touch-action: none;
+  }
+
+  .joystick-bg-ring {
+    position: absolute;
+    inset: 14px;
+    border-radius: 50%;
+    border: 2px dashed var(--border);
+  }
+
+  .joystick-crosshair {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .joystick-crosshair::before,
+  .joystick-crosshair::after {
+    content: '';
+    position: absolute;
+    background: var(--border);
+  }
+  .joystick-crosshair::before {
+    width: 100%;
+    height: 1px;
+  }
+  .joystick-crosshair::after {
+    width: 1px;
+    height: 100%;
+  }
+
+  .joystick-knob {
+    position: absolute;
+    width: 80px; /*64px;*/
+    height: 80px; /*64px;*/
+    border-radius: 50%;
+    background: radial-gradient(var(--orange-light), var(--orange) 70%);*/
+    background-color:var(--orange);
+    border: 4px solid var(--orange);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+    display: flex;            /* ★ 中央揃えに必要 */
+    align-items: center;      /* ★ 中央揃え */
+    justify-content: center;  /* ★ 中央揃え */
+
+    touch-action: none;
+    will-change: transform;
+  }
+
+.joy-dir-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* ▼ 四方向三角形（上・下・左・右） */
+.joy-dir-marker::before,
+.joy-dir-marker::after,
+.joy-dir-marker div::before,
+.joy-dir-marker div::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0.8;
+}
+
+/* 上向き三角形 */
+.joy-dir-marker::before {
+  top: -28px;
+  left: -8px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 10px solid var(--bg);
+}
+
+/* 下向き三角形 */
+.joy-dir-marker::after {
+  top: 16px;
+  left: -8px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid var(--bg);
+}
+
+/* 左右の三角形は子要素で */
+.joy-dir-marker div::before {
+  left: -28px;
+  top: -8px;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 10px solid var(--bg);
+}
+
+.joy-dir-marker div::after {
+  left: 16px;
+  top: -8px;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 10px solid var(--bg);
+}
+
+/* ジョイスティックラベル */
+
+.joy-label {
+  position: absolute;
+  font-family: "Space Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 4px;
+  width: 52px;                   /* ★固定幅 */
+  text-align: left;                /* 左寄せにも可 */
+  pointer-events: none;              /* UI操作の邪魔をしない */
+  user-select: none;
+}
+
+/* Xラベル → 右上配置（変数で調整可能） */
+.joy-label-x {
+  top: -20px;
+  right: -10px;
+}
+
+/* Yラベル → 左上配置（変数で調整可能） */
+.joy-label-y {
+  top: -20px;
+  left: -10px;
+}
+
+  /* ========= 右下 ABXY ========= */
+  .buttons-area {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+
+    display: flex;              /* ★ 横並び */
+    flex-direction: row;        /* ★ 左→右 */
+    align-items: center;        /* ★ 縦中央揃え */
+    gap: 12px;                  /* ★ インジケータとボタンの間隔 */
+  }
+
+  .abxy-grid {
+    display: grid;
+    width: 160px;
+    height: 160px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .action-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .btn-x { background: #007AFF; color: white; grid-column: 2; grid-row: 1; }
+  .btn-y { background: #34C759; color: white; grid-column: 1; grid-row: 2; }
+  .btn-a { background: #FF453A; color: white; grid-column: 3; grid-row: 2; }
+  .btn-b { background: #FFD60A; color: #5a4400; grid-column: 2; grid-row: 3; }
+
+  
+/* R1/R2，L1/L2ボタン */
+
+.right-shoulder-buttons {
+  position: absolute;   /* ★ これで任意位置に置けるようになる */
+  bottom:220px;
+  right: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.left-shoulder-buttons {
+  position: absolute;   /* ★ これで任意位置に置けるようになる */
+  bottom: 220px;
+  left: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.right-shoulder-buttons div, .left-shoulder-buttons div {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.shoulder-btn {
+  width: 100px;
+  height: 42px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: 0.08s;
+}
+
+.shoulder-btn.pressed {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+
+.right-shoulder-buttons .indicator, .left-shoulder-buttons .indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ddd;
+  opacity: 0.4;
+  margin: auto;
+  transition: all 0.15s;
+}
+
+.right-shoulder-buttons .indicator.on, .left-shoulder-buttons .indicator.on {
+  background: var(--orange);
+  opacity: 1;
+  box-shadow:
+    inset 0 0 4px rgba(255,255,255,0.6),
+    0 0 6px var(--orange);
+}
+
+  
+  /* ボタン押し込みアニメーション */
+  .action-btn {
+    transition: all 0.08s;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.25);
+  }
+
+  .action-btn.pressed {
+    transform: translateY(4px);
+    box-shadow: none;
+  }
+
+
+/* ボタンインジケータ全体 */
+.indicator-grid {
+  display: grid;
+  width: 80px;        /* ボタン側の半分サイズ */
+  height: 80px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 6px;
+  margin-right: 10px; /* ボタンとインジケータの間隔 */
+}
+
+/* LED インジケータ */
+.indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ddd;          /* 消灯時 */
+  opacity: 0.4;
+  margin: auto;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  transition: all 0.15s;
+}
+
+.indicator.on {
+    /*
+  opacity: 1;
+  box-shadow: 0 0 10px currentColor, 0 0 4px currentColor inset;
+  */
+  background: currentColor;      /* ← 本体がボタン色になる */
+  opacity: 1;
+  box-shadow:
+    inset 0 0 4px rgba(255,255,255,0.6),
+    0 0 6px currentColor;        /* やや光る */
+
+}
+
+/* ======== スライダ全体 ======== */
+.slider-area {
+  position: absolute;
+  bottom: 16px;
+  left: 200px;  /* 位置は自由に調整してください */
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+
+  touch-action: none;
+}
+
+/* 外枠 */
+.slider-container {
+  position: relative;
+  margin:auto;
+  width: 40px;
+  height: 200px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 40px;
+  box-shadow: var(--shadow-lg);
+  overflow: visible;
+
+  touch-action: none;
+}
+
+/* トラック中央線（ジョイスティックの crosshair と統一） */
+.slider-track {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--border);
+  transform: translateX(-50%);
+}
+
+/* ノブ（ジョイスティックと同じデザイン） */
+.slider-knob {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #fff 0%, var(--surface2) 100%);
+  border: 3px solid var(--orange);
+  box-shadow: 0 4px 16px rgba(232,130,26,0.30);
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+
+  touch-action: none;
+  will-change: transform;
+}
+
+/* モード視認用 */
+.slider-marker {
+  position: absolute;
+  width: 65%;
+  height: 65%;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: 0.15s;
+  border: 1.5px solid var(--orange);
+  font-weight: bold;
+  text-align: center;
+  line-height: 200%;
+}
+
+.sldr1 { color: var(--red); border-color: var(--red); }
+.sldr1 .on { color: white; background-color: var(--red) }
+.sldr2 { color: #ab830b; border-color: var(--yellow); }
+.sldr2 .on { color: #5A4400; background-color: var(--yellow) }
+.sldr3 { color: var(--blue); border-color: var(--blue); }
+.sldr3 .on { color: white; background-color: var(--blue) }
+.sldr4 { color: var(--green); border-color: var(--green); }
+.sldr4 .on { color: white; background-color: var(--green) }
+
+.slider-label {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  text-align:center;
+  color: var(--text-muted);
+  width: 48px; /*fit-content;*/
+  box-shadow: var(--shadow);
+  margin-bottom: 6px;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ポップアップ */
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup-window {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  width: 280px;
+  box-shadow: var(--shadow-lg);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.popup-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--text);
+  text-align: center;
+}
+
+.popup-section {
+  margin-bottom: 16px;
+}
+
+.popup-section label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: var(--text-muted);
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.popup-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+
+.popup-btn-primary {
+  background: var(--orange);
+  color: white;
+}
+
+/* ======== Settings Popup UI ======== */
+
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.40);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 12px;
+}
+
+.settings-window {
+  /*height: 90vh;*/
+  width: 92vw;
+  max-width: 900px;       /* 横長画面に最適化 */
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-title {
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+/* 横並びのスライダー設定エリア（最大4つ） */
+.settings-sliders-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 12px;
+
+  width: 100%;
+}
+
+/* 各スライダーの設定カード */
+.settings-slider-card {
+  flex: 1;
+  min-width: 0;    /* 横画面でブロックが縮んでも崩れない */
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-slider-title {
+  font-weight: 800;
+  /* color: var(--text-muted); */
+  font-size: 14px;
+}
+
+.settings-section-label {
+  font-size: 13px;
+  font-weight: 700;
+  /* color: var(--text-muted); */
+  margin-top: 8px;
+}
+
+.settings-radio-row {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.settings-radio-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.settings-btn {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.settings-btn-primary {
+  background: var(--orange);
+  color: white;
+  border: none;
+}
+
+.settings-option-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.settings-option-btn {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  background: var(--surface);
+  /*
+  border: 2px solid var(--border);*/
+  border: 2px solid;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  /* color: var(--text-muted); */
+  cursor: pointer;
+  user-select: none;
+
+  transition: 0.15s;
+}
+
+.sldr1 .settings-option-btn.selected {
+  background: var(--red);
+  border-color: var(--red)
+}
+
+.sldr2 .settings-option-btn.selected {
+  color: #5A4400;
+  background: var(--yellow);
+  border-color: var(--yellow)
+}
+
+.sldr3 .settings-option-btn.selected {
+  background: var(--blue);
+  border-color: var(--blue)
+}
+
+.sldr4 .settings-option-btn.selected {
+  background: var(--green);
+  border-color: var(--green)
+}
+
+
+.settings-option-btn.selected {
+  /*
+  background: var(--orange);
+  */
+  color: white;
+  /*
+  border-color: var(--orange-dark);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+  */
+}
+
+.settings-option-btn:active {
+  transform: scale(0.96);
+}
+
+/* 縦小画面対策用
+@media (max-height: 500px) {
+  .settings-window {
+    padding: 12px;
+    max-height: 96vh
+  }
+
+  .settings-slider-card {
+    padding: 8px;
+  }
+
+  .settings-option-btn {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+*/
+
+  /* ========= Toast ========= */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 24px;
+    opacity: 0;
+    transition: .3s;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
