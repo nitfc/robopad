@@ -2,7 +2,7 @@
   "name": "Robot Gamepad Controller",
   "short_name": "RoboPad",
   "description": "ロボット操作のためのゲームパッド型コントローラーアプリ。",
-  "start_url": "/robopad/index.html",
+  "start_url": "/robopad/index.html?fullscreen=true",
   "scope": "/robopad/",
   "display": "fullscreen",
   "orientation": "landscape",
