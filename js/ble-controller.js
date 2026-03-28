@@ -8,8 +8,13 @@ const BLE_CHAR_JOYSTICK_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
 const BLE_CHAR_BUTTON_UUID   = '0000ffe2-0000-1000-8000-00805f9b34fb';
 const BLE_CHAR_SLIDER_UUID   = '0000ffe3-0000-1000-8000-00805f9b34fb';
 
-export class BLEController {
+/* ========= デバイスフィルター ========= */
+const filters = [{
+  // serviceIds: [BLE_SERVICE_UUID],
+  name: 'robopad'
+}];
 
+export class BLEController {
   constructor({
     onConnect = ()=>{},
     onDisconnect = ()=>{},
@@ -43,7 +48,8 @@ export class BLEController {
     try {
       /* --- デバイス選択 --- */
       this.device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true, 
+        acceptAllDevices: false, 
+        filters: filters,
         optionalServices: [BLE_SERVICE_UUID]
       });
 
@@ -78,7 +84,7 @@ export class BLEController {
     if (this.device && this.device.gatt.connected) {
       this.device.gatt.disconnect();
     }
-    // handleDisconnect() が呼ばれる
+    _handleDisconnect();
   }
 
   _handleDisconnect() {
