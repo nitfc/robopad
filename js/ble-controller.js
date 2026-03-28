@@ -10,7 +10,7 @@ const BLE_CHAR_SLIDER_UUID   = '0000ffe3-0000-1000-8000-00805f9b34fb';
 
 /* ========= デバイスフィルター ========= */
 const filters = [{
-  // serviceIds: [BLE_SERVICE_UUID],
+  serviceIds: [BLE_SERVICE_UUID],
   name: 'robopad'
 }];
 
