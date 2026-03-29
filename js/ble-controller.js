@@ -3,15 +3,16 @@
    ============================================================ */
 
 /* ========= BLE UUID ========= */
-const BLE_SERVICE_UUID       = '0000ffe0-0000-1000-8000-00805f9b34fb';
-const BLE_CHAR_JOYSTICK_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
-const BLE_CHAR_BUTTON_UUID   = '0000ffe2-0000-1000-8000-00805f9b34fb';
-const BLE_CHAR_SLIDER_UUID   = '0000ffe3-0000-1000-8000-00805f9b34fb';
+const BLE_SERVICE_UUID        = '0000ffe0-0000-1000-8000-00805f9b34fb';
+const BLE_CHAR_JOYSTICK_UUID  = '0000ffe1-0000-1000-8000-00805f9b34fb';
+const BLE_CHAR_BUTTON_UUID    = '0000ffe2-0000-1000-8000-00805f9b34fb';
+const BLE_CHAR_SLIDER_I8_UUID = '0000ffe3-0000-1000-8000-00805f9b34fb';
+const BLE_CHAR_SLIDER_U8_UUID = '0000ffe4-0000-1000-8000-00805f9b34fb';
 
 /* ========= デバイスフィルター ========= */
 const filters = [{
   serviceIds: [BLE_SERVICE_UUID],
-  name: 'robopad'
+  namePrefix: 'robopad'
 }];
 
 export class BLEController {
@@ -34,7 +35,8 @@ export class BLEController {
 
     this.charJoystick = null;
     this.charButton = null;
-    this.charSlider = null;
+    this.charSliderI8 = null;
+    this.charSliderU8 = null;
 
     this.connected = false;
   }
@@ -66,7 +68,8 @@ export class BLEController {
       /* --- 3つの characteristic を取得 --- */
       this.charJoystick = await service.getCharacteristic(BLE_CHAR_JOYSTICK_UUID);
       this.charButton   = await service.getCharacteristic(BLE_CHAR_BUTTON_UUID);
-      this.charSlider   = await service.getCharacteristic(BLE_CHAR_SLIDER_UUID);
+      this.charSliderI8 = await service.getCharacteristic(BLE_CHAR_SLIDER_I8_UUID);
+      this.charSliderU8 = await service.getCharacteristic(BLE_CHAR_SLIDER_U8_UUID);
 
       this.connected = true;
 
@@ -84,7 +87,7 @@ export class BLEController {
     if (this.device && this.device.gatt.connected) {
       this.device.gatt.disconnect();
     }
-    _handleDisconnect();
+    this._handleDisconnect();
   }
 
   _handleDisconnect() {
@@ -125,14 +128,27 @@ export class BLEController {
     }
   }
 
-  async sendSlider(id, value) {
-    if (!this.connected || !this.charSlider) return;
+  async sendSliderI8(id, value) {
+    if (!this.connected || !this.charSliderI8) return;
 
     try {
-      await this.charSlider.writeValueWithoutResponse(
+      await this.charSliderI8.writeValueWithoutResponse(
         new Int8Array([id, value])
       );
-      this.onDebug(`SLIDER${id}: ${value}`);
+      this.onDebug(`SLIDER${id}: ${value}s`);
+    } catch(e) {
+      this.onDebug("SLIDER送信失敗: " + e.message);
+    }
+  }
+
+    async sendSliderU8(id, value) {
+    if (!this.connected || !this.charSliderU8) return;
+
+    try {
+      await this.charSliderU8.writeValueWithoutResponse(
+        new Uint8Array([id, value])
+      );
+      this.onDebug(`SLIDER${id}: ${value}u`);
     } catch(e) {
       this.onDebug("SLIDER送信失敗: " + e.message);
     }

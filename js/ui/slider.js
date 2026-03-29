@@ -40,9 +40,10 @@ export class VerticalSlider {
   }
 
   /* -------- 外部からのモード変更 -------- */
-  setModes({ mode, rangeMode }) {
+  setModes({ mode, rangeMode }, onSendCallback) {
     if (mode) this.mode = mode;
     if (rangeMode) this.rangeMode = rangeMode;
+    if (onSendCallback) this.onSend = onSendCallback;
     this.updateMarker();
   }
 

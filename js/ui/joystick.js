@@ -101,7 +101,7 @@ export class Joystick {
       `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
 
     const joyX = Math.round(dx / this.radius * 127);
-    const joyY = Math.round(dy / this.radius * 127);
+    const joyY = - Math.round(dy / this.radius * 127);
 
     this.xOutEl.textContent = joyX;
     this.yOutEl.textContent = joyY;
@@ -161,7 +161,7 @@ export class Joystick {
         `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
 
       const joyX = Math.round(dx / this.radius * 127);
-      const joyY = Math.round(dy / this.radius * 127);
+      const joyY = - Math.round(dy / this.radius * 127);
 
       this.xOutEl.textContent = joyX;
       this.yOutEl.textContent = joyY;

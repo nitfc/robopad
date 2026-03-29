@@ -92,7 +92,7 @@ document.querySelectorAll(".slider-block").forEach(block => {
   const slider = new VerticalSlider(
     block,
     id,
-    (sliderId, value) => ble.sendSlider(sliderId, value)   // ← ★ここ
+    (sliderId, value) => ble.sendSliderI8(sliderId, value)   // ← ★ここ
   );
 
   sliderObjects.push(slider);
@@ -100,7 +100,7 @@ document.querySelectorAll(".slider-block").forEach(block => {
 
 
 /* SliderSettingsManager 作成 */
-const sliderManager = new SliderSettingsManager(sliderObjects);
+const sliderManager = new SliderSettingsManager(sliderObjects, ble);
 
 // アプリ起動時、保存されている設定を UI に反映
 sliderManager.applySettings(appSettings.sliderSettings);

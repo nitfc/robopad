@@ -1,8 +1,10 @@
 /* ========= ui/sliderSettingsManager.js ========= */
 
 export class SliderSettingsManager {
-  constructor(sliderObjects) {
+  constructor(sliderObjects, ble) {
     this.sliders = sliderObjects;   // VerticalSlider の配列
+    this.ble = ble;   // BLEController のインスタンス
+
   }
 
   applySettings(settings) {
@@ -12,7 +14,11 @@ export class SliderSettingsManager {
       const slider = this.sliders.find(s => s.sliderId == sliderId);
       if (!slider) continue;
 
-      slider.setModes(settings[sliderId]);   // VerticalSlider の API を利用
+      slider.setModes(settings[sliderId],
+        settings[sliderId].rangeMode === "signed" ?
+          (sliderId, value) => this.ble.sendSliderI8(sliderId, value) :
+          (sliderId, value) => this.ble.sendSliderU8(sliderId, value)
+      );   // VerticalSlider の API を利用
     }
   }
 
