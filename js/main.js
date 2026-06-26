@@ -5,6 +5,8 @@ import { GameButton } from "./ui/game-button.js";
 import { VerticalSlider } from "./ui/slider.js";
 import { SliderSettingsManager } from "./ui/slider-setting-manager.js";
 import { SettingsUI } from "./ui/settingsUI.js";
+import { KeyboardJoystick } from "./ui/keyboard-joystick.js";
+import { KeyboardControls } from "./ui/keyboard-controls.js";
 import { SettingsStore } from "./SettingsStore.js";
 import { AppSettings } from "./AppSettings.js";
 
@@ -56,6 +58,16 @@ const joy = new Joystick(
   (x, y) => ble.sendJoystick(x, y)   // ★ DI：ここだけで BLE と接続！
 );
 
+/* キーボードジョイスティック (WASD) */
+
+const kbJoy = new KeyboardJoystick(
+  document.getElementById("joystickKnob"),
+  document.getElementById("joyX"),
+  document.getElementById("joyY"),
+  joy.radius,
+  (x, y) => ble.sendJoystick(x, y)
+);
+
 /* ボタンマネージャー */
 
 const buttonManager = new ButtonManager(ble);
@@ -73,8 +85,8 @@ const buttons = [
 ];
 
 // UIとボタンクラスの紐付け
-buttons.forEach(btn => {
-  new GameButton(
+const gameButtons = buttons.map(btn => {
+  return new GameButton(
     document.getElementById(btn.id),
     btn.bit,
     document.getElementById(btn.ind_id),
@@ -104,6 +116,11 @@ const sliderManager = new SliderSettingsManager(sliderObjects, ble);
 
 // アプリ起動時、保存されている設定を UI に反映
 sliderManager.applySettings(appSettings.sliderSettings);
+
+new KeyboardControls({
+  buttons: gameButtons,
+  sliders: sliderObjects
+});
 
 /* SettingsUI 作成 */
 const settingsUI = new SettingsUI(

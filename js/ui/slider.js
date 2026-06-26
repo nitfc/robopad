@@ -118,6 +118,31 @@ export class VerticalSlider {
   }
 
   /* -------- 指を離した時 -------- */
+  setValue(value) {
+    const min = this.rangeMode === "signed" ? -127 : 0;
+    const max = this.rangeMode === "signed" ? 127 : 255;
+    const v = Math.max(min, Math.min(max, Math.round(value)));
+
+    if (this.rangeMode === "signed") {
+      this.dy = -(v / 127) * this.radius;
+    } else {
+      const normalized = v / 255;
+      this.dy = -(normalized * 2 - 1) * this.radius;
+    }
+
+    this.knob.style.transform =
+      `translate(-50%, calc(-50% + ${this.dy}px))`;
+    this.valueEl.textContent = v;
+
+    if (this.onSend) this.onSend(this.sliderId, v);
+  }
+
+  resetFromKeyboard() {
+    if (this.mode === "reset") {
+      this.returnToZero();
+    }
+  }
+
   end() {
     this.active = false;
 

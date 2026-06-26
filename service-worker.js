@@ -3,7 +3,7 @@
    Base path: /robopad
 ============================================================ */
 
-const CACHE_NAME = "robopad-app-v1";
+const CACHE_NAME = "robopad-app-v3";
 
 /* キャッシュしたい静的ファイル（/robopad を必ず先頭につける） */
 const STATIC_ASSETS = [
@@ -17,12 +17,14 @@ const STATIC_ASSETS = [
   "/robopad/js/AppSettings.js",
   "/robopad/js/ble-controller.js",
   "/robopad/js/main.js",
-  "/robopad/js/SettingStore.js",
+  "/robopad/js/SettingsStore.js",
   "/robopad/js/utility.js",
 
   "/robopad/js/ui/button-manager.js",
   "/robopad/js/ui/game-button.js",
   "/robopad/js/ui/joystick.js",
+  "/robopad/js/ui/keyboard-controls.js",
+  "/robopad/js/ui/keyboard-joystick.js",
   "/robopad/js/ui/settingsUI.js",
   "/robopad/js/ui/slider-setting-manager.js",
   "/robopad/js/ui/slider.js",
